@@ -12,12 +12,6 @@
 #include <string>
 
 
-int precedence(CalcToken::Kind operator_){
-
-    return 0;
-}
-
-
 bool calc_evaluate(const std::vector<CalcToken>& tokens, double* out,
                    std::string* error) {
 
@@ -32,7 +26,7 @@ bool calc_evaluate(const std::vector<CalcToken>& tokens, double* out,
             ops.push(t.kind);
         }
         else if (t.kind == CalcToken::Kind::RParen){
-            while (!ops.empty() != CalcToken::Kind::LParen){
+            while (!ops.empty() && ops.top() != CalcToken::Kind::LParen){
                 const CalcToken::Kind op = ops.top();
                 ops.pop();
                 if (values.size() < 2) {
@@ -52,8 +46,9 @@ bool calc_evaluate(const std::vector<CalcToken>& tokens, double* out,
                     answer = leftValue * rightValue;
                 } else if (op == CalcToken::Kind::Divide) {
                     if (rightValue == 0.0) {
-                        return false;
+                        
                         *error = "division by zero";
+                        return false;
                     }
                     answer = leftValue / rightValue;
                 }
@@ -61,8 +56,9 @@ bool calc_evaluate(const std::vector<CalcToken>& tokens, double* out,
             }
 
             if (ops.empty()){
-                return false;
+                
                 *error = "Error";
+                return false;
             }
 
             ops.pop();
@@ -74,11 +70,10 @@ bool calc_evaluate(const std::vector<CalcToken>& tokens, double* out,
             } else { precedence = 1;}
 
             while (!ops.empty() && (ops.top() != CalcToken::Kind::LParen)){
-                int precedenceTop = 0;
+                int precedenceTop = 1;
                 if ((t.kind == CalcToken::Kind::Times) || (t.kind == CalcToken::Kind::Divide)){
                 precedenceTop = 2;
-                } else { precedenceTop = 1;}
-
+                }
                 if (precedenceTop < precedence){
                     break;
                 }
@@ -102,8 +97,9 @@ bool calc_evaluate(const std::vector<CalcToken>& tokens, double* out,
                     answer = leftValue * rightValue;
                 } else if (op == CalcToken::Kind::Divide) {
                     if (rightValue == 0.0) {
-                        return false;
+                        
                         *error = "division by zero";
+                        return false;
                     }
                     answer = leftValue / rightValue;
                 }
@@ -115,6 +111,47 @@ bool calc_evaluate(const std::vector<CalcToken>& tokens, double* out,
         }
     }
 
+    while (!ops.empty()) {
+        if (ops.top() == CalcToken::Kind::LParen){
+            
+            *error = ("error");
+            return false;
 
+        }
+        const CalcToken::Kind op = ops.top();
+        ops.pop();
+        if (values.size() < 2) {
+            *error = "error";
+            return false;
+        }
+        double answer = 0.0;
+        const double rightValue = values.top();   
+        values.pop();
+        const double leftValue = values.top();   
+        values.pop();
+        if (op == CalcToken::Kind::Plus) {
+            answer = leftValue + rightValue;
+        } else if (op == CalcToken::Kind::Minus) {
+            answer = leftValue - rightValue;
+        } else if (op == CalcToken::Kind::Times) {
+            answer = leftValue * rightValue;
+        } else if (op == CalcToken::Kind::Divide) {
+            if (rightValue == 0.0) {
+                
+                *error = "division by zero";
+                return false;
+            }
+            answer = leftValue / rightValue;
+        }
+        values.push(answer);
+        if (values.size() != 1){
+            
+            *error= ("error");
+            return false;
+        }
+
+        *out = values.top();
+        return true;
+    }
 
 }
