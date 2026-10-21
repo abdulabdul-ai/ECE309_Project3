@@ -142,17 +142,16 @@ bool calc_evaluate(const std::vector<CalcToken>& tokens, double* out,
                 return false;
             }
             answer = leftValue / rightValue;
-            values.push(answer);
+
         }
-        
+        values.push(answer);
     }
     
-        if (values.size() != 1){
-            
-            *error= ("error");
-            return false;
-        }
+    if (values.size() != 1){    
+        *error= ("error");
+        return false;
+    }
 
-        *out = values.top();
-        return true;
+    *out = values.top();
+    return true;
 }
