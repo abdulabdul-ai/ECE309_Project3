@@ -82,9 +82,34 @@ bool calc_evaluate(const std::vector<CalcToken>& tokens, double* out,
                 if (precedenceTop < precedence){
                     break;
                 }
-                if (!calcNow(ops, values, error)){
+
+                const CalcToken::Kind op = ops.top();
+                ops.pop();
+                if (values.size() < 2) {
+                    *error = "error";
                     return false;
                 }
+                double answer = 0.0;
+                const double rightValue = values.top();   
+                values.pop();
+                const double leftValue = values.top();   
+                values.pop();
+                if (op == CalcToken::Kind::Plus) {
+                    answer = leftValue + rightValue;
+                } else if (op == CalcToken::Kind::Minus) {
+                    answer = leftValue - rightValue;
+                } else if (op == CalcToken::Kind::Times) {
+                    answer = leftValue * rightValue;
+                } else if (op == CalcToken::Kind::Divide) {
+                    if (rightValue == 0.0) {
+                        return false;
+                        *error = "division by zero";
+                    }
+                    answer = leftValue / rightValue;
+                }
+                values.push(answer);
+                
+
             }
             ops.push(t.kind);
         }
