@@ -9,8 +9,21 @@
 
 namespace fs = std::filesystem;
 
-bool Workspace::resolve(std::string_view /*user_path*/, fs::path* /*out*/,
+bool Workspace::resolve(std::string_view user_path, fs::path* out,
                         std::string* reason) const {
+    if (user_path.empty()){
+        *reason = "empty path";
+        return false;
+    }
+    //auto path = std::string_view.begin();
+    for (std::size_t i = 0; i < user_path.size(); i++){
+        if (user_path[i] == '\0'){
+            *reason = "null character";
+            return false;
+        }
+    }
+
+
     *reason = "Workspace::resolve not implemented yet";   // TODO
     return false;
 }
