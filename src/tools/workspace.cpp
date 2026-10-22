@@ -23,6 +23,13 @@ bool Workspace::resolve(std::string_view user_path, fs::path* out,
         }
     }
 
+    const fs::path p = user_path;
+    if (p.is_absolute() || p.has_root_path()){
+        *reason = "non-workspace-relative path";
+        return false;
+    }
+
+    const fs::path n = p.lexically_normal();
 
     *reason = "Workspace::resolve not implemented yet";   // TODO
     return false;
