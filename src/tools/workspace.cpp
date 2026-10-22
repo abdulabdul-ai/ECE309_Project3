@@ -31,6 +31,29 @@ bool Workspace::resolve(std::string_view user_path, fs::path* out,
 
     const fs::path n = p.lexically_normal();
 
-    *reason = "Workspace::resolve not implemented yet";   // TODO
-    return false;
+    if (*n.begin() == ".."){
+        *reason = "climbs above root";
+        return false;
+    }
+    int count = 0;
+    for (auto b = n.begin(); b != n.end(); ++b) {
+        if (*b == "."){
+            count++;
+        }
+        if (count >= 2){
+            *reason = "climbs above root inside";
+            return false;
+        }
+    }
+
+    if (n == "."){
+        *out = root();
+
+    } else {
+        *out = (root()/n);
+    }
+
+    return true;
+    //*reason = "Workspace::resolve not implemented yet";   // TODO
+    //return false;
 }
