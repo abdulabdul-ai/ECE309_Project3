@@ -22,29 +22,29 @@ std::size_t ToolRegistry::hash(std::string_view key) noexcept {
     // return 0;   // TODO: FNV-1a (spec Appendix A) or another real string hash
 }
 
-bool ToolRegistry::add(std::unique_ptr<Tool> tool) {
+bool ToolRegistry::add(std::unique_ptr<Tool> /*tool*/) {
     //std::size_t index = hash(tool);
     //std::size_t bucketsProbed = 0;
     //while (bucketsProbed++ < )
 
-    if (tool == nullptr){
-        return false;
-    }
+    // if (tool == nullptr){
+    //     return false;
+    // }
 
-    if (( toolCount + 1)/tool.bucket_count() > tool.load_factor()){
-        new_bucket_count() = buckets_count()*2;
-        for (std::size_t i = 0; i < new_bucket_count; i++){
+    // if (( toolCount + 1)/tool.bucket_count() > tool.load_factor()){
+    //     new_bucket_count() = buckets_count()*2;
+    //     for (std::size_t i = 0; i < new_bucket_count; i++){
 
-        }
-    }
-    else if (tool == tool.find(name)){
-        if (tool.load_factor() > 0.75){
-            bucket_count = bucket_count*2;
-        }
-    }
-    else{
-        return true;
-    }
+    //     }
+    // }
+    // else if (tool == tool.find(name)){
+    //     if (tool.load_factor() > 0.75){
+    //         bucket_count = bucket_count*2;
+    //     }
+    // }
+    // else{
+    //     return true;
+    // }
     return true;   // TODO
 }
 
@@ -106,20 +106,17 @@ std::size_t ToolRegistry::max_probe_length() const {
             continue;
         }
             std::size_t homeSlot = hash(buckets[i]->name()) % buckets.size();
-            probeDistance++;
-            
+            if (i >= homeSlot){
+                probeDistance  = 1 + i - homeSlot;
+            } else {
+                probeDistance =  1 + i + (buckets.size() - homeSlot);
+            }
 
-
-            
-            probeDistance = probeDistance - i;
-            
-        if (probeDistance > probeWorstCase){
-            probeWorstCase = probeDistance;
-        }
+            if (probeDistance > probeWorstCase){
+                probeWorstCase = probeDistance;
+            }
 
     }
-
-
     return probeWorstCase;
     
 }
