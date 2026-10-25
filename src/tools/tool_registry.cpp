@@ -105,17 +105,21 @@ std::size_t ToolRegistry::max_probe_length() const {
         if (buckets[i] == nullptr){
             continue;
         }
-        else {
             std::size_t homeSlot = hash(buckets[i]->name()) % buckets.size();
+            probeDistance++;
+            
+
+
+            
+            probeDistance = probeDistance - i;
+            
+        if (probeDistance > probeWorstCase){
+            probeWorstCase = probeDistance;
         }
-        probeWorstCase++;
-
 
     }
 
-    probeDistance = probeWorstCase - i;
-    if (probeDsitance == 0){
-        return 1;
-    }
+
+    return probeWorstCase;
     
 }
