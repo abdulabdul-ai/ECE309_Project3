@@ -22,20 +22,29 @@ std::size_t ToolRegistry::hash(std::string_view key) noexcept {
     // return 0;   // TODO: FNV-1a (spec Appendix A) or another real string hash
 }
 
-bool ToolRegistry::add(std::unique_ptr<Tool> /*tool*/) {
+bool ToolRegistry::add(std::unique_ptr<Tool> tool) {
 
+    if (took == nullptr){
+        return false;
+    }
+    if (tool = name){
+
+    }
+    else{
+        return true;
+    }
     return false;   // TODO
 }
 
-Tool* ToolRegistry::find(std::string_view /*name*/) const {
+Tool* ToolRegistry::find(std::string_view name) const {
     return nullptr;   // TODO
 }
 
 std::size_t ToolRegistry::size() const noexcept {
-    return 0;   // TODO
+    return toolCount;   // TODO
 }
 
-void ToolRegistry::for_each(const std::function<void(const Tool&)>& /*fn*/) const {
+void ToolRegistry::for_each(const std::function<void(const Tool&)>& fn) const {
     // TODO
 }
 
@@ -45,6 +54,7 @@ std::size_t ToolRegistry::bucket_count() const noexcept {
 }
 
 double ToolRegistry::load_factor() const noexcept {
+    //load_factor() = 
     return 0.0;   // TODO
 }
 
