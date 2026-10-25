@@ -83,7 +83,14 @@ std::size_t ToolRegistry::size() const noexcept {
     return toolCount;   // TODO
 }
 
-void ToolRegistry::for_each(const std::function<void(const Tool&)>& /*fn*/) const {
+void ToolRegistry::for_each(const std::function<void(const Tool&)>& fn) const {
+    for (std::size_t i = 0; i < buckets.size(); i++){
+        if (buckets[i] == nullptr){
+            continue;
+        }
+        Tool& registeredTool = *buckets[i];
+        fn(registeredTool);
+    }
 
     // TODO
 }
