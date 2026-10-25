@@ -103,5 +103,76 @@ TEST(calc_division_by_zero) {
 //   reg_alternative_hash          REQUIRED: longest chain of a weak hash
 //   ws_<case>                     REQUIRED: every row of the table in spec §4.4
 //   calc_<case>                   left-to-right, parentheses, negatives
+//T1
+TEST(reg_null_rejected){
+    ToolRegistry r;
+    CHECK(r.size() == 0);
 
+    CHECK(r.add(nullptr) == false);
+    CHECK(r.size() == 0);
+
+    CHECK(r.add(std::make_unique<EchoTool>("uno")) == true);
+    CHECK(r.size() == 1);
+
+    CHECK(r.find("absent") == nullptr);
+    CHECK(r.size() == 1);
+
+}
+
+//T2
+TEST(reg_for_each_visits_each_once){
+    ToolRegistry r;
+    r.add(std::make_unique<EchoTool>("uno"));
+    r.add(std::make_unique<EchoTool>("dos"));
+    r.add(std::make_unique<EchoTool>("tres"));
+    r.add(std::make_unique<EchoTool>("quatro"));
+    r.add(std::make_unique<EchoTool>("cinco"));
+    r.add(std::make_unique<EchoTool>("seis"));
+    r.add(std::make_unique<EchoTool>("siete"));
+
+    int count_1 = 0;   
+    int count_2 = 0;
+    int count_3 = 0;
+    int count_4 = 0;
+    int count_5 = 0;
+    int count_6 = 0;
+    int count_7 = 0;
+    int count_total = 0;
+
+    r.for_each([&](const Tool& tool){
+        count_total++;
+        if (tool.name() == "uno"){
+            count_1++;
+        }
+        if (tool.name() == "dos"){
+            count_2++;
+        }
+        if (tool.name() == "tres"){
+            count_3++;
+        }
+        if (tool.name() == "quatro"){
+            count_4++;
+        }
+        if (tool.name() == "cinco"){
+            count_5++;
+        }
+        if (tool.name() == "seis"){
+            count_6++;
+        }
+        if (tool.name() == "siete"){
+            count_7++;
+        }
+    });
+
+    CHECK(count_1 == 1);
+    CHECK(count_2 == 1);
+    CHECK(count_3 == 1);
+    CHECK(count_4 == 1);
+    CHECK(count_5 == 1);
+    CHECK(count_6 == 1);
+    CHECK(count_7 == 1);
+    CHECK(count_total == 7);
+
+
+}
 int main(int argc, char** argv) { return mt::run_all(argc, argv); }
