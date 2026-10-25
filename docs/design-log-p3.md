@@ -1,6 +1,6 @@
 # Project 3 Design Log
-**Author:** Mudassir Mohammed · **P2 code used:** <instructor reference>
-**Tools used:** <AI assistants / other tools, and what you used them for>
+**Author:** Mudassir Mohammed · **P2 code used:** instructor reference code for P2 used because I was having commpiling issues while doing P2 and couldn't finish it. 
+**Tools used:** Because I was having issues with compiling/running/debugging my code for P2, I used ChatGPT to guide me to set up my workstation and help me install relevant CMake software tools, run accurate scripts in CLI to get VS Code to my project directory and get it to compile using WSL (Ubuntu) and run tests. I also used ChatGPT to explain what the project required of me and help me review what the code provided to us meant in human terms and how that connects to the files that we have to implement. This really helped with understanding the syntax of the program, and lessened the overwhelming feeling that came with being given so many files. 
 
 <!-- 500–800 words. An argument, not a diary: say what you decided, what
      you rejected, and what evidence backs it up. Delete these comments
