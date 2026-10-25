@@ -37,9 +37,9 @@ bool ToolRegistry::add(std::unique_ptr<Tool> tool) {
 
     
     
-    if (( toolCount + 1)/tool.bucket_count() > tool.load_factor()){
-         new_bucket_count() = buckets_count()*2;
-         for (std::size_t i = 0; i < new_bucket_count; i++){
+    if ((((toolCount + 1)*1.0)/bucket_count()) > 0.75){
+         new_bucket_count() = bucket_count()*2;
+         //for (std::size_t i = 0; i < new_bucket_count; i++){
 
     }
      }
