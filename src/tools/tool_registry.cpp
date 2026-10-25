@@ -23,20 +23,40 @@ std::size_t ToolRegistry::hash(std::string_view key) noexcept {
 }
 
 bool ToolRegistry::add(std::unique_ptr<Tool> tool) {
-
-    if (took == nullptr){
+    std::size_t index = hash(tool);
+    std::size_t bucketsProbed = 0;
+    while (bucketsProbed++ < )
+    if (tool == nullptr){
         return false;
     }
-    if (tool = name){
-
+    else if (tool == tool.find(name)){
+        if (tool.load_factor() > 0.75){
+            bucket_count = bucket_count*2;
+        }
     }
     else{
         return true;
     }
-    return false;   // TODO
+    return true;   // TODO
 }
 
 Tool* ToolRegistry::find(std::string_view name) const {
+    bool found = false;
+    for (std::size_t i = 0; !found && i < tool.bucket_count(); i++) {
+//       bucketIndex = (hashCode + i) % hashTable⇢length
+         
+//       // An empty-since-start bucket implies the key is not in the table
+//       if (hashTable[bucketIndex] is empty-since-start) {
+//          foundEmptySinceStart = true
+//       }
+//       else if (hashTable[bucketIndex] is not empty-after-removal) {
+//          // Check if the non-empty bucket has the key
+//          if (key == hashTable[bucketIndex]⇢key) {
+//             // Update the value
+//             hashTable[bucketIndex]⇢value = value
+//             return true
+//          }
+       }
     return nullptr;   // TODO
 }
 
@@ -44,21 +64,23 @@ std::size_t ToolRegistry::size() const noexcept {
     return toolCount;   // TODO
 }
 
-void ToolRegistry::for_each(const std::function<void(const Tool&)>& fn) const {
+void ToolRegistry::for_each(const std::function<void(const Tool&)>& /*fn*/) const {
+
     // TODO
 }
 
 std::size_t ToolRegistry::bucket_count() const noexcept {
     return buckets.size();
-    return 0;   // TODO
+   //return 0;   // TODO
 }
 
 double ToolRegistry::load_factor() const noexcept {
-    //load_factor() = 
-    return 0.0;   // TODO
+    return (size()*1.0)/bucket_count();
+    //return 0.0;   // TODO
 }
 
 std::size_t ToolRegistry::max_probe_length() const {
+
     return 0;   // TODO
 }
 
