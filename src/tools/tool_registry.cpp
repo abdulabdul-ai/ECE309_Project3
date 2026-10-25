@@ -23,11 +23,19 @@ std::size_t ToolRegistry::hash(std::string_view key) noexcept {
 }
 
 bool ToolRegistry::add(std::unique_ptr<Tool> tool) {
-    std::size_t index = hash(tool);
-    std::size_t bucketsProbed = 0;
-    while (bucketsProbed++ < )
+    //std::size_t index = hash(tool);
+    //std::size_t bucketsProbed = 0;
+    //while (bucketsProbed++ < )
+
     if (tool == nullptr){
         return false;
+    }
+
+    if (( toolCount + 1)/tool.bucket_count() > tool.load_factor()){
+        new_bucket_count() = buckets_count()*2;
+        for (std::size_t i = 0; i < new_bucket_count; i++){
+
+        }
     }
     else if (tool == tool.find(name)){
         if (tool.load_factor() > 0.75){
@@ -42,7 +50,16 @@ bool ToolRegistry::add(std::unique_ptr<Tool> tool) {
 
 Tool* ToolRegistry::find(std::string_view name) const {
     bool found = false;
-    for (std::size_t i = 0; !found && i < tool.bucket_count(); i++) {
+    std::size_t index =  hash(name) % buckets.size();
+    for (std::size_t i = 0; i < buckets.size(); ++i){
+        if (buckets[i] == name){
+            return nullptr;
+        } else
+
+        if ((buckets[i] -> name) == name){
+            return true;
+        }
+    }
 //       bucketIndex = (hashCode + i) % hashTable⇢length
          
 //       // An empty-since-start bucket implies the key is not in the table
@@ -51,12 +68,13 @@ Tool* ToolRegistry::find(std::string_view name) const {
 //       }
 //       else if (hashTable[bucketIndex] is not empty-after-removal) {
 //          // Check if the non-empty bucket has the key
+
 //          if (key == hashTable[bucketIndex]⇢key) {
 //             // Update the value
 //             hashTable[bucketIndex]⇢value = value
 //             return true
 //          }
-       }
+       
     return nullptr;   // TODO
 }
 
