@@ -38,21 +38,19 @@ bool ToolRegistry::add(std::unique_ptr<Tool> tool) {
     
     
     if ((((toolCount + 1)*1.0)/bucket_count()) > 0.75){
-         new_bucket_count() = bucket_count()*2;
-         //for (std::size_t i = 0; i < new_bucket_count; i++){
+         std::size_t new_bucket_count = bucket_count()*2;
+         std::vector<std::unique_ptr<Tool>> bucket2(new_bucket_count);
+        for (std::size_t i = 0; i < bucket2.size(); i++){
+            if (buckets[i] == nullptr){
+                continue;
+            }
+            std::size_t index = hash(buckets[i]->name()) % bucket2.size();
+            bucket2[index] = buckets[i];
+        }
 
     }
-     }
-    // else if (tool == tool.find(name)){
-    //     if (tool.load_factor() > 0.75){
-    //         bucket_count = bucket_count*2;
-    //     }
-    // }
-    // else{
-    //     return true;
-    // }
-    return true;   // TODO
 }
+
 
 Tool* ToolRegistry::find(std::string_view name) const {
     //bool found = false;
