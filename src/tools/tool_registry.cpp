@@ -5,6 +5,7 @@
 
 #include "tools/tool_registry.h"
 #include <vector>
+#include <utility>
 
 
 ToolRegistry::ToolRegistry(): buckets(16) {};    // TODO: create your initial buckets
@@ -40,15 +41,30 @@ bool ToolRegistry::add(std::unique_ptr<Tool> tool) {
     if ((((toolCount + 1)*1.0)/bucket_count()) > 0.75){
          std::size_t new_bucket_count = bucket_count()*2;
          std::vector<std::unique_ptr<Tool>> bucket2(new_bucket_count);
-        for (std::size_t i = 0; i < bucket2.size(); i++){
+        for (std::size_t i = 0; i < buckets.size(); i++){
             if (buckets[i] == nullptr){
                 continue;
             }
             std::size_t index = hash(buckets[i]->name()) % bucket2.size();
-            bucket2[index] = buckets[i];
+
+            while(bucket2[index]){
+                index = (index + 1) % bucket2.size();
+            }
+
+            bucket2[index] = std::move(buckets[i]);
         }
 
+        buckets = std::move(bucket2);
+
     }
+
+    std::size_t index2 = hash(buckets->name) % buckets.size();
+    while (buckets[index2]) {
+        index2 = (index2 + 1) % buckets.size();
+    }
+    buckets[index2] = std::move(tool);
+    toolCount++;
+    return true;
 }
 
 
@@ -131,91 +147,3 @@ std::size_t ToolRegistry::max_probe_length() const {
     return probeWorstCase;
     
 }
-
-
-
-
-
-
-
-// HashRemove(hashTable, key) {
-//    // Get the key's hash code
-//    hashCode = Hash(key)
-
-//    for (i = 0; i < hashTable⇢length; i++) {
-//       bucketIndex = (hashCode + i) % hashTable⇢length
-         
-//       // An empty-since-start bucket implies the key is not in the table
-//       if (hashTable[bucketIndex] is empty-since-start) {
-//          return false
-//       }
-         
-//       if (hashTable[bucketIndex] is not empty-after-removal) {
-//          // Check if the non-empty bucket has the key
-//          if (key == hashTable[bucketIndex]⇢key) {
-//             // Remove by assigning the bucket with empty-after-removal
-//             hashTable[bucketIndex] = empty-after-removal
-//             return true
-//          }
-//       }
-//    }
-
-//    return false // key not found
-// }
-
-
-
-// HashString(stringValue) {
-//    hashCode = 0
-//    for (character in stringValue) {
-//       hashCode += character
-//    }
-//    return hashCode
-// }
-
-// HashInt(intValue) {
-//    Set intValue's sign bit to 0
-//    return intValue
-// }
-
-// // Inserts the specified key/value pair. If the key already exists, the 
-// // corresponding value is updated. If inserted or updated, true is returned. 
-// // If not inserted, then false is returned.
-// HashInsert(hashTable, key, value) {
-
-//    // Get the key's hash code
-//    hashCode = Hash(key)
-
-//    // First search for the key in the table. If found, update bucket's value.
-//    foundEmptySinceStart = false
-//    for (i = 0; !foundEmptySinceStart && i < hashTable⇢length; i++) {
-//       bucketIndex = (hashCode + i) % hashTable⇢length
-         
-//       // An empty-since-start bucket implies the key is not in the table
-//       if (hashTable[bucketIndex] is empty-since-start) {
-//          foundEmptySinceStart = true
-//       }
-//       else if (hashTable[bucketIndex] is not empty-after-removal) {
-//          // Check if the non-empty bucket has the key
-//          if (key == hashTable[bucketIndex]⇢key) {
-//             // Update the value
-//             hashTable[bucketIndex]⇢value = value
-//             return true
-//          }
-//       }
-//    }
-      
-//    // The key is not in the table, so insert into first empty bucket
-//    for (i = 0; i < hashTable⇢length; i++) {
-//       bucketIndex = (hashCode + i) % hashTable⇢length
-//       if (hashTable[bucketIndex] is either type of empty) {
-//          newItem = Allocate new bucket item
-//          newItem⇢key = key
-//          newItem⇢value = value
-//          hashTable[bucketIndex] = newItem
-//          return true
-//       }
-//    }
-      
-//    return false // no empty bucket found
-// }
