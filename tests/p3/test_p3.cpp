@@ -175,4 +175,72 @@ TEST(reg_for_each_visits_each_once){
 
 
 }
+
+//T3
+TEST(reg_10000_tools){
+    ToolRegistry r; //Initiliaze variables
+    Tool* firstPointer = nullptr;
+    bool loadFactorValid = true;
+    int nameCountValid = 10000;
+
+    //Traverse through a loop 10,000 times to add tolls
+    for (int i = 0; i < 10000; i++){ 
+        r.add(std::make_unique<NamedTool>("tool_" + std::to_string(i)));
+        // get the pointer address for the first tool
+        if (i == 0){
+            firstPointer = r.find("tool_0");
+        }
+        //Every iterations in the loop, check if load_factor ever crosses 1.0
+        if (r.load_factor() > 1.0){
+            loadFactorValid = false;
+        }
+    }
+
+
+
+    // Go through the tools list to see if every name can 
+    // be found (has an address). If not, remove from the 10000 count
+    for (int i = 0; i < 10000; i++){
+        if (r.find("tool_" + std::to_string(i)) == nullptr){
+            nameCountValid--;
+        }
+    }
+    // Check if every name found by checking if number is equal to 10000
+    CHECK(nameCountValid == 10000);
+    //Check if pointer obtained after first insert is the same after last
+    CHECK(r.find("tool_0") == firstPointer);
+    CHECK(loadFactorValid == true);
+    CHECK(r.max_probe_length() <= 64);
+
+    // Prints the values, had to use chatGPT to find out how to convert between different types using type cast.
+    std::printf("Bucket Count: %d\n", static_cast<int>(r.bucket_count()));
+    std::printf("Load Factor: %.2f\n", r.load_factor());
+    std::printf("Max Probe Length: %d\n", static_cast<int>(r.max_probe_length()));
+
+}
+
+//T4
+TEST(reg_alternative_hash){
+    ToolRegistry r;
+    int largest_chain = 0;
+
+    // Insert all tools
+    for (int i = 0; i < 10000; i++){
+        r.add(std::make_unique<NamedTool>("tool_" + std::to_string(i)));
+    }
+    std::vector<int> bucketCounter(r.bucket_count(),0);
+    // Use the alt. hash
+    for (int i = 0; i < 10000; i++){
+        std::string name = "tool_" + std::to_string(i);                           // rebuild the name
+        std::size_t alt_hash = static_cast<unsigned char>(name[0]) + name.size(); // first character + length
+        bucketCounter[alt_hash % bucketCounter.size()]++;                         // count it in its bucket
+    }
+    for (std::size_t i = 0; i < bucketCounter.size(); i++){
+        if(bucketCounter[i]> largest_chain){
+            largest_chain = bucketCounter[i];
+        }
+    }
+    
+    std::printf("Weak Hash's longest chain: %d | Real Numbers: %d\n", largest_chain, static_cast<int>(r.max_probe_length()));
+}
 int main(int argc, char** argv) { return mt::run_all(argc, argv); }
