@@ -2,12 +2,9 @@
 **Author:** Mudassir Mohammed · **P2 code used:** instructor reference code for P2 used because I was having commpiling issues while doing P2 and couldn't finish it. 
 **Tools used:** Because I was having issues with compiling/running/debugging my code for P2, I used ChatGPT to guide me to set up my workstation and help me install relevant CMake software tools, run accurate scripts in CLI to get VS Code to my project directory and get it to compile using WSL (Ubuntu) and run tests. I also used ChatGPT to explain what the project required of me and help me review what the code provided to us meant in human terms and how that connects to the files that we have to implement. This really helped with understanding the syntax of the program, and lessened the overwhelming feeling that came with being given so many files. Additionally, I used ChatGPT for referencing how to convert between different types for printing values in my Tests. 
 
-<!-- 500–800 words. An argument, not a diary: say what you decided, what
-     you rejected, and what evidence backs it up. Delete these comments
-     before submitting. -->
 
 ## 1. Hash table
-<!-- Chaining or open addressing, and why. Your hash function, load-factor
+ Chaining or open addressing, and why. Your hash function, load-factor
      threshold, and resize policy. Paste your 10,000-tool numbers
      (bucket_count, load_factor, max_probe_length) next to the alternative
      hash's longest chain. Explain briefly why add() is amortized O(1). -->
@@ -20,17 +17,14 @@ My hash function is the 64-bit FNV-1a, my function uses all characters and retur
      Load Factor: 0.61
      Max Probe Length: 30
 
-     Weak Hash's longest chain: 9000 | Original Hash (FNV-1a) length: 30
+     Weak Hash's longest chain: 9000 | Original Hash (FNV-1a) probe length: 30
 
      And add is amortized O(1) because instead of traversing through the entire array, we directly map keys to indexes in the array. And only when the index is non-empty, we travel until the specific distance of max_probe_lenghth to find an empty bucket for the key, hence we avoid O(n) case (where it traverses the entire array). And, since we only double our table size each time we appraoch the table getting filled, we get O(1) as an average of all such instances where keys have to be added to the hash tables.
 
 ## 2. Pointer stability
-<!-- Why does a Tool* returned by find() survive a resize in your design? -->
 Because in my code, each element stored inside my buckets in my hash tables are unique_ptr, which is a smart pointer pointing to the Tool object, not the tool object itself. And whenever we resize the hash table, we simply move the pointers (using std::move) to the new array, and doesn't modify the Tool object's memory addresss and it stays whereever it was initially allocated. So, when find() returns a pointer address, it survives the resize. 
 
 ## 3. Calculator trace
-<!-- Trace the values and ops stacks for 2 * (3 + 4) - 5, one token at a
-     time, in your own words. -->
 
      Stack: LIFO
      Stack: bottom->[]<-top
@@ -92,8 +86,6 @@ Because in my code, each element stored inside my buckets in my hash tables are 
      Ex:  the top of the ops stack is NOT (, and its precendence is determined to be 1, and theres no other operator with a greater precendence, so apply and compute the two numbers in the values stack, then pop the - operator.And since tokens ran out, single number stored in values is the answer
 
 ## 4. Errors as values
-<!-- Why do tools, resolve() and calc_evaluate() return errors instead of
-     throwing? When IS an exception the right choice? -->
      They return errors because this programs expects errors from the user such as giving integers which end up in division by zero, or trying to access file directories which don't exist, etc. And rather than crashing the program, we want the program to manage such errors rather than halt the entire program, when you can continue the rest of the program and inform the user of the failure.
 
      The right time to throw exceptions would be for run-time programmer errors rather than distasteful input from the user, such as calling the wrong accessor (ex: "as_string()" on a number).
