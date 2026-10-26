@@ -7,7 +7,7 @@
  Chaining or open addressing, and why. Your hash function, load-factor
      threshold, and resize policy. Paste your 10,000-tool numbers
      (bucket_count, load_factor, max_probe_length) next to the alternative
-     hash's longest chain. Explain briefly why add() is amortized O(1). -->
+     hash's longest chain. Explain briefly why add() is amortized O(1).
      For my hash table, I chose linear probing because I wanted to avoid nested loops in my code, and keep it as simple as possible with a single array. Additionally, it's cache-friendly.  And even when resizing my hash table, I would only have to move my pointers. 
 
 My hash function is the 64-bit FNV-1a, my function uses all characters and returns the full width value, not just the modulo-reduced value. I initilaized my bucket size to be 16 elements long. I decided to maintain my load-factor to be less than or equal to 0.75 at all costs. And since linear probing slows down sharply as the load_factor approaches 1, whenever I predicted inserting into a bucket will make it go over that 0.75 threshold using ((toolCount + 1) / bucket_count in an if statement), I resized and grow my hash table by a muliple of 2. 
