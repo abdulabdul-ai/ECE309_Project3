@@ -246,7 +246,7 @@ TEST(reg_alternative_hash){
 }
 
 //T5
- TEST(ws_row_paths){
+ TEST(ws_accept_row_paths){
     TempDir root;
     Workspace ws(root.path());
     
@@ -278,30 +278,7 @@ TEST(reg_alternative_hash){
     CHECK(!(ws.resolve("", &out, &reason))); 
     CHECK(!reason.empty()); 
 
-    reason = "";
-    std::string row9 = std::string("notes") + '\0' + "/x";
-    CHECK(!(ws.resolve(row9, &out, &reason))); 
-    CHECK(!reason.empty()); 
 
-    reason = "";
-    CHECK(!(ws.resolve("/etc/passwd", &out, &reason))); 
-    CHECK(!reason.empty()); 
-
-    reason = "";
-    CHECK(!(ws.resolve("..", &out, &reason))); 
-    CHECK(!reason.empty()); 
-
-    reason = "";
-    CHECK(!(ws.resolve("../etc/passwd", &out, &reason))); 
-    CHECK(!reason.empty()); 
-
-    reason = "";
-    CHECK(!(ws.resolve("a/../../b", &out, &reason))); 
-    CHECK(!reason.empty()); 
-
-    reason = "";
-    CHECK(!(ws.resolve("notes/../../ws/notes/todo.txt", &out, &reason))); 
-    CHECK(!reason.empty()); 
 
  }
 
@@ -358,11 +335,40 @@ TEST(reg_alternative_hash){
 
 //T7
  TEST(ws_rejects_dotdot){
+    TempDir root;
+    Workspace ws(root.path());
+    
+    fs::path out;
+    std::string reason;
+    reason = "";
+    std::string row9 = std::string("notes") + '\0' + "/x";
+    CHECK(!(ws.resolve(row9, &out, &reason))); 
+    CHECK(!reason.empty()); 
 
+    reason = "";
+    CHECK(!(ws.resolve("/etc/passwd", &out, &reason))); 
+    CHECK(!reason.empty()); 
+
+    reason = "";
+    CHECK(!(ws.resolve("..", &out, &reason))); 
+    CHECK(!reason.empty()); 
+
+    reason = "";
+    CHECK(!(ws.resolve("../etc/passwd", &out, &reason))); 
+    CHECK(!reason.empty()); 
+
+    reason = "";
+    CHECK(!(ws.resolve("a/../../b", &out, &reason))); 
+    CHECK(!reason.empty()); 
+
+    reason = "";
+    CHECK(!(ws.resolve("notes/../../ws/notes/todo.txt", &out, &reason))); 
+    CHECK(!reason.empty()); 
  }
 
 // //T8
- TEST(reg_rejects_duplicate){
+ TEST(reg_hash_order){
+    CHECK(ToolRegistry::hash("ab") != ToolRegistry::hash("ba"));
 
 }
 
@@ -370,8 +376,8 @@ TEST(reg_alternative_hash){
  TEST(calc_my_expressions){
     double v = 0;
     std::string err = "";
-    REQUIRE(!eval("-(2 + 3) * -(-4)", &v, &err));
-    CHECK(err.empty() == false);
+    REQUIRE(eval("-0 + (2 + 3) * -1 * (-4)", &v, &err));
+    CHECK(v == 20);
 
     v = 0;
     err = "";
@@ -380,10 +386,12 @@ TEST(reg_alternative_hash){
  }
 
 // //T10
- TEST(){
-
+ TEST(calc_operator_unary){
+    double v = 0;
+    std::string err = "";
+    REQUIRE(eval("2 +2 - 3 /-3 +1 *2", &v, &err));
+    CHECK(v == 7);
  }
 
 
  int main(int argc, char** argv) { return mt::run_all(argc, argv); }
-
