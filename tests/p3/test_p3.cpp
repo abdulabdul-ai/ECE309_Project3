@@ -103,6 +103,7 @@ TEST(calc_division_by_zero) {
 //   reg_alternative_hash          REQUIRED: longest chain of a weak hash
 //   ws_<case>                     REQUIRED: every row of the table in spec §4.4
 //   calc_<case>                   left-to-right, parentheses, negatives
+
 //T1
 TEST(reg_null_rejected){
     ToolRegistry r;
@@ -243,4 +244,146 @@ TEST(reg_alternative_hash){
     
     std::printf("Weak Hash's longest chain: %d | Real Numbers: %d\n", largest_chain, static_cast<int>(r.max_probe_length()));
 }
-int main(int argc, char** argv) { return mt::run_all(argc, argv); }
+
+//T5
+ TEST(ws_row_paths){
+    TempDir root;
+    Workspace ws(root.path());
+    
+    fs::path out;
+    std::string reason;
+
+    CHECK(ws.resolve("notes/todo.txt", &out, &reason)); 
+    CHECK(out == (ws.root() / "notes" / "todo.txt"));
+
+    CHECK(ws.resolve("./notes//todo.txt", &out, &reason)); 
+    CHECK(out == (ws.root() / "notes" / "todo.txt"));
+
+    CHECK(ws.resolve(".", &out, &reason));
+    CHECK(out == (ws.root())); 
+
+    CHECK(ws.resolve("a/../b", &out, &reason)); 
+    CHECK(out == (ws.root() / "b")); 
+
+    CHECK(ws.resolve("a/..", &out, &reason)); 
+    CHECK(out == (ws.root())); 
+
+    CHECK(ws.resolve("new/dir/file.txt", &out, &reason)); 
+    CHECK(out == (ws.root() / "new" / "dir" / "file.txt"));
+
+    CHECK(ws.resolve("my..notes.txt", &out, &reason)); 
+    CHECK(out == (ws.root() / "my..notes.txt")); 
+
+    reason = "";
+    CHECK(!(ws.resolve("", &out, &reason))); 
+    CHECK(!reason.empty()); 
+
+    reason = "";
+    std::string row9 = std::string("notes") + '\0' + "/x";
+    CHECK(!(ws.resolve(row9, &out, &reason))); 
+    CHECK(!reason.empty()); 
+
+    reason = "";
+    CHECK(!(ws.resolve("/etc/passwd", &out, &reason))); 
+    CHECK(!reason.empty()); 
+
+    reason = "";
+    CHECK(!(ws.resolve("..", &out, &reason))); 
+    CHECK(!reason.empty()); 
+
+    reason = "";
+    CHECK(!(ws.resolve("../etc/passwd", &out, &reason))); 
+    CHECK(!reason.empty()); 
+
+    reason = "";
+    CHECK(!(ws.resolve("a/../../b", &out, &reason))); 
+    CHECK(!reason.empty()); 
+
+    reason = "";
+    CHECK(!(ws.resolve("notes/../../ws/notes/todo.txt", &out, &reason))); 
+    CHECK(!reason.empty()); 
+
+ }
+
+//T6
+ TEST(calc_no_parenthesis){
+    double v = 0;
+    std::string err;
+    REQUIRE(eval("2 + 3 * 4", &v, &err));
+    CHECK(v == 14);
+
+    v = 0;
+    err = "";
+    REQUIRE(eval("10 - 4 - 3", &v, &err));
+    CHECK(v == 3);
+
+    v = 0;
+    err = "";
+    REQUIRE(eval("100 / 10 / 5", &v, &err));
+    CHECK(v == 2);
+
+
+
+
+
+ }
+
+ //T7
+ TEST(calc_with_parentheis){
+    double v = 0;
+    std::string err = "";
+    REQUIRE(eval("(2 + 3) * 4", &v, &err));
+    CHECK(v == 20);
+
+    v = 0;
+    err = "";
+    REQUIRE(eval("2 * (3 + 4) - 5", &v, &err));
+    CHECK(v == 9);
+
+    v = 0;
+    err = "";
+    REQUIRE(eval("-3 * -3", &v, &err));
+    CHECK(v == 9);
+
+    v = 0;
+    err = "";
+    REQUIRE(eval("7 / 2", &v, &err));
+    CHECK(v == 3.5);
+
+    v = 0;
+    err = "";
+    REQUIRE(!eval("1 / (2 - 2)", &v, &err));
+    CHECK(err == "division by zero");
+ }
+
+//T7
+ TEST(ws_rejects_dotdot){
+
+ }
+
+// //T8
+ TEST(reg_rejects_duplicate){
+
+}
+
+// //T9
+ TEST(calc_my_expressions){
+    double v = 0;
+    std::string err = "";
+    REQUIRE(!eval("-(2 + 3) * -(-4)", &v, &err));
+    CHECK(err.empty() == false);
+
+    v = 0;
+    err = "";
+    REQUIRE(eval("-10.5 * 5.5", &v, &err));
+    CHECK(v == -57.75);
+ }
+
+// //T10
+ TEST(){
+
+ }
+
+
+ int main(int argc, char** argv) { return mt::run_all(argc, argv); }
+
