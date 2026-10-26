@@ -4,11 +4,9 @@
 
 
 ## 1. Hash table
- Chaining or open addressing, and why. Your hash function, load-factor
-     threshold, and resize policy. Paste your 10,000-tool numbers
-     (bucket_count, load_factor, max_probe_length) next to the alternative
-     hash's longest chain. Explain briefly why add() is amortized O(1).
-     For my hash table, I chose linear probing because I wanted to avoid nested loops in my code, and keep it as simple as possible with a single array. Additionally, it's cache-friendly.  And even when resizing my hash table, I would only have to move my pointers. 
+ Chaining or open addressing, and why. Your hash function, load-factor threshold, and resize policy. Paste your 10,000-tool numbers (bucket_count, load_factor, max_probe_length) next to the alternative hash's longest chain. Explain briefly why add() is amortized O(1).
+
+For my hash table, I chose linear probing because I wanted to avoid nested loops in my code, and keep it as simple as possible with a single array. Additionally, it's cache-friendly.  And even when resizing my hash table, I would only have to move my pointers. 
 
 My hash function is the 64-bit FNV-1a, my function uses all characters and returns the full width value, not just the modulo-reduced value. I initilaized my bucket size to be 16 elements long. I decided to maintain my load-factor to be less than or equal to 0.75 at all costs. And since linear probing slows down sharply as the load_factor approaches 1, whenever I predicted inserting into a bucket will make it go over that 0.75 threshold using ((toolCount + 1) / bucket_count in an if statement), I resized and grow my hash table by a muliple of 2. 
 
@@ -19,7 +17,7 @@ My hash function is the 64-bit FNV-1a, my function uses all characters and retur
 
      Weak Hash's longest chain: 9000 | Original Hash (FNV-1a) probe length: 30
 
-     And add is amortized O(1) because instead of traversing through the entire array, we directly map keys to indexes in the array. And only when the index is non-empty, we travel until the specific distance of max_probe_lenghth to find an empty bucket for the key, hence we avoid O(n) case (where it traverses the entire array). And, since we only double our table size each time we appraoch the table getting filled, we get O(1) as an average of all such instances where keys have to be added to the hash tables.
+And add is amortized O(1) because instead of traversing through the entire array, we directly map keys to indexes in the array. And only when the index is non-empty, we travel until the specific distance of max_probe_lenghth to find an empty bucket for the key, hence we avoid O(n) case (where it traverses the entire array). And, since we only double our table size each time we appraoch the table getting filled, we get O(1) as an average of all such instances where keys have to be added to the hash tables.
 
 ## 2. Pointer stability
 Because in my code, each element stored inside my buckets in my hash tables are unique_ptr, which is a smart pointer pointing to the Tool object, not the tool object itself. And whenever we resize the hash table, we simply move the pointers (using std::move) to the new array, and doesn't modify the Tool object's memory addresss and it stays whereever it was initially allocated. So, when find() returns a pointer address, it survives the resize. 
@@ -86,9 +84,9 @@ Because in my code, each element stored inside my buckets in my hash tables are 
      Ex:  the top of the ops stack is NOT (, and its precendence is determined to be 1, and theres no other operator with a greater precendence, so apply and compute the two numbers in the values stack, then pop the - operator.And since tokens ran out, single number stored in values is the answer
 
 ## 4. Errors as values
-     They return errors because this programs expects errors from the user such as giving integers which end up in division by zero, or trying to access file directories which don't exist, etc. And rather than crashing the program, we want the program to manage such errors rather than halt the entire program, when you can continue the rest of the program and inform the user of the failure.
+ They return errors because this programs expects errors from the user such as giving integers which end up in division by zero, or trying to access file directories which don't exist, etc. And rather than crashing the program, we want the program to manage such errors rather than halt the entire program, when you can continue the rest of the program and inform the user of the failure.
 
-     The right time to throw exceptions would be for run-time programmer errors rather than distasteful input from the user, such as calling the wrong accessor (ex: "as_string()" on a number).
+The right time to throw exceptions would be for run-time programmer errors rather than distasteful input from the user, such as calling the wrong accessor (ex: "as_string()" on a number).
 
 ## 5. What I would design differently
 I would like to challenge myself by choosing chaining for ToolRegistry the next time I get started, additionally, I believe I could choose more diverse set of test cases than the ones in the project spec to really ensure my code is working in all types of conditions, not just the ones given in the project spec. 
