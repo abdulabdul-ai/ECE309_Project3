@@ -1,5 +1,8 @@
 // tests/p3/test_p3.cpp — YOUR P3 TEST SUITE.
 //
+// Mudassir Mohammed
+// 10/26/2026
+// This prgram files has 15 tests for my Program 3
 // The five tests below are worked examples. Keep them, and add your own
 // until you have AT LEAST 15 (spec §6 lists what must be covered).
 // Name every test <area>_<what>: reg_ for the registry, ws_ for the
@@ -8,6 +11,7 @@
 // Build & run:   cmake --build build && ./build/test_p3
 // One area:      ./build/test_p3 reg_        (names starting with "reg_")
 // One test:      ./build/test_p3 =reg_add_and_find
+
 
 #include "../mini_test.h"
 #include "../test_helpers.h"     // TempDir, write_text, args1, ...
