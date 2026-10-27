@@ -1,16 +1,15 @@
 //Mudassir Mohammed
-//10/10/2026
+//10/26/2026
 // src/tools/tool_registry.cpp — YOU IMPLEMENT (spec §4.3).
 //
 // A hand-written hash table. No std::unordered_map / std::map / std::set.
-// Every function below is a stub so the starter compiles. Replace each body.
 
 #include "tools/tool_registry.h"
 #include <vector>
 #include <utility>
 
 
-ToolRegistry::ToolRegistry(): buckets(16) {};    // create your initial buckets and sets size to 16
+ToolRegistry::ToolRegistry(): buckets(16) {}   // create your initial buckets and sets size to 16
 ToolRegistry::~ToolRegistry() = default;   // unique_ptrs in your buckets free the tools
 //returns the 64-bit FNV-1a hash value
 std::size_t ToolRegistry::hash(std::string_view key) noexcept {
@@ -34,7 +33,7 @@ bool ToolRegistry::add(std::unique_ptr<Tool> tool) {
 
     
     //if adding one more tool increases the load factor to more than 0.75
-    //grow the hash table and resize by 2.
+    //grow the hash table and double the size.
     if ((((toolCount + 1)*1.0)/bucket_count()) > 0.75){
          //create a twice as big hash table
          std::size_t new_bucket_count = bucket_count()*2;
@@ -76,65 +75,93 @@ bool ToolRegistry::add(std::unique_ptr<Tool> tool) {
     return true;
 }
 
-
+// This function searches within the hash table using the argument name.
+// If name is found in the table, return the pointer stored under that name.
+// If name not found in the table, return nullptr
 Tool* ToolRegistry::find(std::string_view name) const {
-
+    // start the index at the home slot.
     std::size_t index =  hash(name) % buckets.size();
+    // traverse through the list
     for (std::size_t i = 0; i < buckets.size(); i++){
+        // if the slot is empty:
         if (buckets[index] == nullptr){
-            return nullptr;
-        } else
-
-        if ((buckets[index] -> name()) == name){
-            return buckets[index].get();
+            return nullptr; // then return nullptr
         }
-        index = (index + 1) % buckets.size();
+        // if the bucket slot reads the same value as the name:
+        if ((buckets[index] -> name()) == name){
+            return buckets[index].get(); // return its raw pointer.
+        }
+        index = (index + 1) % buckets.size(); //increment the bucket #, and roll over after the end of the table
     }
        
-    return nullptr;   
+    return nullptr;   //default return nullptr
 }
 
+//This function returns the number of  tools stored in the has table
 std::size_t ToolRegistry::size() const noexcept {
-    return toolCount;   //returns the # of total tools in the table
+    return toolCount;   //returns the # of total tools in the table 
 }
 
+//This function uses the fn argument and calls it for every tool in the table
+// it has no return type
 void ToolRegistry::for_each(const std::function<void(const Tool&)>& fn) const {
+    // traverse the table starting from index 0
     for (std::size_t i = 0; i < buckets.size(); i++){
+        // if the bucket is empty, ignore it
         if (buckets[i] == nullptr){
             continue;
         }
+        // create a reference to the tool
         Tool& registeredTool = *buckets[i];
+        //function calls using the tool inside the parameter.
         fn(registeredTool);
     }
 }
 
+//This function returns the total size of the hash table
 std::size_t ToolRegistry::bucket_count() const noexcept {
     return buckets.size(); //returns how many buckets in teh table
 }
 
+//This function returns the double data type of the load factor
+//Calculated by diving the number of buckets currently filled divided by the total number of buckets
+// in the table.
 double ToolRegistry::load_factor() const noexcept {
     return (size()*1.0)/bucket_count();
 }
 
+// This function returns the maximum length of the probe of a tool.
+// If the homeSlot is empty, the tool is added and the maximum probe length is 1,
+// otherwise it counts the distance from the homeSlot index to the index where the tool actually
+// gets stored.
 std::size_t ToolRegistry::max_probe_length() const {
+    // initializes the variables
     std::size_t probeWorstCase = 0;
     std::size_t probeDistance = 0;
+    //traverse the bucket starting from index 0
     for (std::size_t i = 0; i < buckets.size(); i++){
+        // if the bucket is empty, ignore it
         if (buckets[i] == nullptr){
             continue;
         }
+            // initializes and stores the expected index of the tool
             std::size_t homeSlot = hash(buckets[i]->name()) % buckets.size();
+            // tool is stored at the homeSlot or after it numerically.
             if (i >= homeSlot){
-                probeDistance  = 1 + i - homeSlot;
+                probeDistance  = 1 + i - homeSlot; // find distance from homeSlot to stored slot
+                
+            // tool is stored before the homeSlot numerically due to rolling over from the bottom of the 
+            // table to the top of the table.
             } else {
-                probeDistance =  1 + i + (buckets.size() - homeSlot);
+                probeDistance =  1 + i + (buckets.size() - homeSlot); // find distance from homeSlot to stored slot
             }
-
+            //compares whether the distance calculated for the linear probe is greater than the
+            // current maximum probe length
             if (probeDistance > probeWorstCase){
-                probeWorstCase = probeDistance;
+                probeWorstCase = probeDistance; //if yes, sets it as the new maximum
             }
 
     }
-    return probeWorstCase;
+    return probeWorstCase; //returns the maximum probe length value
     
 }
