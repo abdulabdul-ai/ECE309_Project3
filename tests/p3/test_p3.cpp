@@ -48,7 +48,7 @@ bool eval(const std::string& expr, double* value, std::string* error) {
 }  // namespace
 
 // ---------------------------------------------------------------- examples
-
+//Test 1
 TEST(reg_add_and_find) {
     ToolRegistry r;
     auto t = std::make_unique<NamedTool>("alpha");
@@ -58,7 +58,7 @@ TEST(reg_add_and_find) {
     CHECK(r.find("alpha") == raw);              // same object, not a copy
     CHECK(r.find("beta") == nullptr);
 }
-
+//Test 2
 TEST(reg_duplicate_keeps_original) {
     ToolRegistry r;
     auto first = std::make_unique<NamedTool>("alpha");
@@ -68,7 +68,7 @@ TEST(reg_duplicate_keeps_original) {
     CHECK(r.find("alpha") == original);
     CHECK(r.size() == 1);
 }
-
+//Test 3
 TEST(ws_rejects_parent_escape) {
     TempDir d;
     Workspace ws(d.path());
@@ -79,14 +79,14 @@ TEST(ws_rejects_parent_escape) {
     CHECK(!ws.resolve("../etc/passwd", &out, &reason));
     CHECK(!reason.empty());
 }
-
+//Test 4
 TEST(calc_precedence) {
     double v = 0;
     std::string err;
     REQUIRE(eval("2 + 3 * 4", &v, &err));
     CHECK(v == 14);
 }
-
+//Test 5
 TEST(calc_division_by_zero) {
     double v = 0;
     std::string err;
@@ -104,7 +104,7 @@ TEST(calc_division_by_zero) {
 //   ws_<case>                     REQUIRED: every row of the table in spec §4.4
 //   calc_<case>                   left-to-right, parentheses, negatives
 
-//T1
+//Test 6
 TEST(reg_null_rejected){
     ToolRegistry r;
     CHECK(r.size() == 0);
@@ -120,7 +120,7 @@ TEST(reg_null_rejected){
 
 }
 
-//T2
+//Test 7
 TEST(reg_for_each_visits_each_once){
     ToolRegistry r;
     r.add(std::make_unique<EchoTool>("uno"));
@@ -177,7 +177,7 @@ TEST(reg_for_each_visits_each_once){
 
 }
 
-//T3
+//Test 8
 TEST(reg_10000_tools){
     ToolRegistry r; //Initiliaze variables
     Tool* firstPointer = nullptr;
@@ -220,7 +220,7 @@ TEST(reg_10000_tools){
 
 }
 
-//T4
+//Test 9
 TEST(reg_alternative_hash){
     ToolRegistry r;
     int largest_chain = 0;
@@ -244,8 +244,12 @@ TEST(reg_alternative_hash){
     
     std::printf("Weak Hash's longest chain: %d | Real Numbers: %d\n", largest_chain, static_cast<int>(r.max_probe_length()));
 }
+// Test 10
+ TEST(reg_hash_order){
+    CHECK(ToolRegistry::hash("ab") != ToolRegistry::hash("ba"));
 
-//T5
+}
+// Test 11
  TEST(ws_accept_row_paths){
     TempDir root;
     Workspace ws(root.path());
@@ -282,58 +286,7 @@ TEST(reg_alternative_hash){
 
  }
 
-//T6
- TEST(calc_no_parenthesis){
-    double v = 0;
-    std::string err;
-    REQUIRE(eval("2 + 3 * 4", &v, &err));
-    CHECK(v == 14);
-
-    v = 0;
-    err = "";
-    REQUIRE(eval("10 - 4 - 3", &v, &err));
-    CHECK(v == 3);
-
-    v = 0;
-    err = "";
-    REQUIRE(eval("100 / 10 / 5", &v, &err));
-    CHECK(v == 2);
-
-
-
-
-
- }
-
- //T7
- TEST(calc_with_parentheis){
-    double v = 0;
-    std::string err = "";
-    REQUIRE(eval("(2 + 3) * 4", &v, &err));
-    CHECK(v == 20);
-
-    v = 0;
-    err = "";
-    REQUIRE(eval("2 * (3 + 4) - 5", &v, &err));
-    CHECK(v == 9);
-
-    v = 0;
-    err = "";
-    REQUIRE(eval("-3 * -3", &v, &err));
-    CHECK(v == 9);
-
-    v = 0;
-    err = "";
-    REQUIRE(eval("7 / 2", &v, &err));
-    CHECK(v == 3.5);
-
-    v = 0;
-    err = "";
-    REQUIRE(!eval("1 / (2 - 2)", &v, &err));
-    CHECK(err == "division by zero");
- }
-
-//T7
+// Test 12
  TEST(ws_rejects_dotdot){
     TempDir root;
     Workspace ws(root.path());
@@ -366,13 +319,62 @@ TEST(reg_alternative_hash){
     CHECK(!reason.empty()); 
  }
 
-// //T8
- TEST(reg_hash_order){
-    CHECK(ToolRegistry::hash("ab") != ToolRegistry::hash("ba"));
+// Test 13
+ TEST(calc_no_parenthesis){
+    double v = 0;
+    std::string err;
+    REQUIRE(eval("2 + 3 * 4", &v, &err));
+    CHECK(v == 14);
 
-}
+    v = 0;
+    err = "";
+    REQUIRE(eval("10 - 4 - 3", &v, &err));
+    CHECK(v == 3);
 
-// //T9
+    v = 0;
+    err = "";
+    REQUIRE(eval("100 / 10 / 5", &v, &err));
+    CHECK(v == 2);
+
+
+
+
+
+ }
+
+ // Test 14
+ TEST(calc_with_parentheis){
+    double v = 0;
+    std::string err = "";
+    REQUIRE(eval("(2 + 3) * 4", &v, &err));
+    CHECK(v == 20);
+
+    v = 0;
+    err = "";
+    REQUIRE(eval("2 * (3 + 4) - 5", &v, &err));
+    CHECK(v == 9);
+
+    v = 0;
+    err = "";
+    REQUIRE(eval("-3 * -3", &v, &err));
+    CHECK(v == 9);
+
+    v = 0;
+    err = "";
+    REQUIRE(eval("7 / 2", &v, &err));
+    CHECK(v == 3.5);
+
+    v = 0;
+    err = "";
+    REQUIRE(!eval("1 / (2 - 2)", &v, &err));
+    CHECK(err == "division by zero");
+ }
+
+
+
+
+
+// Test 15
  TEST(calc_my_expressions){
     double v = 0;
     std::string err = "";
@@ -385,7 +387,7 @@ TEST(reg_alternative_hash){
     CHECK(v == -57.75);
  }
 
-// //T10
+// Test 15
  TEST(calc_operator_unary){
     double v = 0;
     std::string err = "";
