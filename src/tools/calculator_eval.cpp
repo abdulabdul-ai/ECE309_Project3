@@ -35,7 +35,7 @@ bool calc_evaluate(const std::vector<CalcToken>& tokens, double* out,
         }
 
         // If the token is ")", it triggers operations to be applied and popped until the top
-        // of the ops stack is (, then the ops stack pops the ")" and continues to accept tokens
+        // of the ops stack is (, then continues to accept tokens
         else if (t.kind == CalcToken::Kind::RParen){
             while (!ops.empty() && ops.top() != CalcToken::Kind::LParen){
                 //take and pop the top operator              
